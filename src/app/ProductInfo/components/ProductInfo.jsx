@@ -2,6 +2,9 @@ import React from 'react'
 import {makeStyles} from "@material-ui/styles";
 import Grid from "@material-ui/core/Grid";
 import {Typography} from "@material-ui/core";
+import {getAuth} from "../../Auth/redux/selectors";
+import {connect} from "react-redux";
+import {NavLink} from "react-router-dom";
 
 
 const useStyles = makeStyles(theme => ({
@@ -63,11 +66,14 @@ const useStyles = makeStyles(theme => ({
         },
         author: {
             marginRight: theme.spacing(2.5)
+        },
+        link:{
+            color: 'black'
         }
     }
 ));
 
-const ProductInfo = ({product}) => {
+const ProductInfo = ({product, isAuth}) => {
     const classes = useStyles();
     return (
         <Grid className={classes.container}>
@@ -86,13 +92,26 @@ const ProductInfo = ({product}) => {
                         <Grid className={classes.price}>{`${product.price} $`}</Grid>
                     </Grid>
                 </Grid>
-                <Grid>
-                    <Grid className={classes.author}>{product.author}</Grid>
-                    <Grid>{product.contact}</Grid>
-                </Grid>
+
+                {isAuth
+                    ?
+                        <Grid>
+                            <Grid className={classes.author}>{product.author}</Grid>
+                            <Grid>{product.contact}</Grid>
+                        </Grid>
+                    :   <NavLink className={classes.link} to='/login'>Login to view contacts</NavLink>
+                }
+
+
             </Grid>
         </Grid>
     )
 };
 
-export default ProductInfo;
+const mapStateToProps = (state) => {
+    return {
+        isAuth: getAuth(state)
+    }
+};
+
+export default connect(mapStateToProps)(ProductInfo);
