@@ -1,6 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {makeStyles} from "@material-ui/styles";
+import {connect} from "react-redux";
+import {toLogout} from "../../Auth/redux/actions";
 
 const useStyles = makeStyles(theme => ({
         box: {
@@ -17,12 +19,12 @@ const useStyles = makeStyles(theme => ({
     }
 ));
 
-const SignedInLinks = () => {
+const SignedInLinks = ({toLogout}) => {
 
     const classes = useStyles();
     return (
-            <NavLink className={classes.link} to='/'>Log Out</NavLink>
+            <NavLink className={classes.link} onClick={toLogout} to='/'>Log Out</NavLink>
     )
 };
 
-export default SignedInLinks
+export default connect(null, {toLogout})(SignedInLinks);

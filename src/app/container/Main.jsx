@@ -3,21 +3,32 @@ import {BrowserRouter, Switch, Route} from "react-router-dom";
 import Navbar from "../Navbar/components/Navbar";
 import ProductList from "../ProductList/components/ProductList";
 import Login from "../Auth/components/Login";
-import SignUp from "../Auth/components/SignUp";
+import ProductInfo from "../ProductInfo/components/ProductInfo";
+import {getProducs} from "../ProductList/redux/selectors";
+import {connect} from "react-redux";
 
-const Main = () => {
+const Main = ({products}) => {
     return (
         <BrowserRouter>
             <>
                 <Navbar/>
                 <Switch>
-                    <Route exact path='/' component={ProductList}/>
-                    <Route path='/login' component={Login}/>
-                    <Route path='/signup' component={SignUp}/>
+                    <Route exact path='/' render={() => <ProductList/>}/>
+                    <Route path='/login' render={() => <Login/>}/>
+                    {
+                        products.map(p =>
+                            <Route key={p.id} path={`/product/${p.id}`}
+                                   render={() => <ProductInfo product={p}/>}/>
+                        )
+                    }
                 </Switch>
             </>
         </BrowserRouter>
     )
 };
 
-export default Main;
+const mapStateToProps = state => ({
+    products: getProducs(state)
+});
+
+export default connect(mapStateToProps)(Main);

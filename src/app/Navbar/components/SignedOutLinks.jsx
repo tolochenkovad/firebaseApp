@@ -23,7 +23,6 @@ const SignedOutLinks = () => {
 
     return (
         <Grid className={classes.box}>
-            <NavLink className={classes.link} to='/signup'>Sign Up</NavLink>
             <NavLink className={classes.link} to='/login'>Login</NavLink>
         </Grid>
     )

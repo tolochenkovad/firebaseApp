@@ -2,67 +2,112 @@ import React from 'react';
 import {makeStyles} from "@material-ui/styles";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
+import {Field, reduxForm} from "redux-form";
+import {connect} from "react-redux";
+import {Redirect} from "react-router-dom";
+import {getAuth} from "../redux/selectors";
+import {toLogin} from "../redux/actions";
 
 const useStyles = makeStyles(theme => ({
-        box: {
-            fontSize: theme.spacing(3),
-            background: '#589ac6',
+        container: {
+            background: '#9fabdc',
             padding: theme.spacing(6.25, 3.75),
             height: '100vh'
         },
         title: {
-          marginBottom: '50px'
+            marginBottom: theme.spacing(6.25)
         },
         form: {
-            marginTop: '50px',
+            marginTop: theme.spacing(6.25),
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
         },
-        input : {
-            marginBottom: '10px',
-            paddingLeft: '20px',
+        input: {
+            marginBottom: theme.spacing(1.25),
+            paddingLeft: theme.spacing(2.5),
             border: '1px solid black',
-            borderRadius: '10px',
+            borderRadius: theme.spacing(1.25),
             outline: 'none',
-            height: '50px',
-            width: '400px',
-            fontSize: '16px',
+            height: theme.spacing(6.25),
+            width: theme.spacing(50),
+            fontSize: theme.spacing(2),
             '&:focus, &:active': {
                 color: 'black',
                 border: '1px solid black'
             }
         },
         btn: {
-            marginTop: '20px',
-            width: '400px',
-            padding: '10px',
-            borderRadius: '5px',
-            fontSize: '18px',
+            marginTop: theme.spacing(2.5),
+            width: theme.spacing(50),
+            padding: theme.spacing(1.25),
+            borderRadius: theme.spacing(0.625),
+            fontSize: theme.spacing(2.25),
             color: 'white',
             transition: '0.2s',
             cursor: 'pointer',
+        },
+        error: {
+            color: 'red'
         }
     }
 ));
 
-const Login = () => {
-
+const LoginForm = ({handleSubmit}) => {
     const classes = useStyles();
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-    };
-
     return (
-        <form className={classes.form} onSubmit={onSubmit}>
-            <Typography variant="h4" className={classes.title} >Login</Typography>
-                <input className={classes.input} placeholder='Email' type="email" id='email'/>
-                <input className={classes.input} placeholder='Password' type="password" id='password'/>
-                <Button variant="contained" color="secondary" className={classes.btn} type={"submit"}>SUBMIT</Button>
-        </form>
+        <Grid className={classes.container}>
+            <form className={classes.form} onSubmit={handleSubmit}>
+                <Typography variant="h4" className={classes.title}>Login</Typography>
+                <Field component='input'
+                       className={classes.input}
+                       placeholder='Email'
+                       type="email"
+                       name="email"
+                />
+                <Field component='input'
+                       className={classes.input}
+                       placeholder='Password'
+                       type="password"
+                       name="password"
+                />
+                <Button variant="contained"
+                        color="secondary"
+                        className={classes.btn}
+                        type={"submit"}>SUBMIT
+                </Button>
+
+            </form>
+        </Grid>
     )
 };
 
-export default Login;
+const LoginReduxForm = reduxForm({form: 'login'})(LoginForm);
+
+const Login = ({isAuth, toLogin}) => {
+
+    const onSubmit = (formData) => {
+        const {email} = formData;
+        toLogin(email);
+    };
+
+    if (isAuth) {
+        return <Redirect to="/"/>
+    }
+
+    return (
+        <LoginReduxForm onSubmit={onSubmit}/>
+    )
+
+};
+
+const mapStateToProps = (state) => {
+    return {
+        isAuth: getAuth(state)
+    }
+};
+
+export default connect(mapStateToProps, {toLogin})(Login);
