@@ -1,11 +1,10 @@
-// import { all, spawn } from 'redux-saga/effects';
-//
-// function* rootSaga() {
-//   yield all([
-//     spawn(notesSaga),
-//     spawn(tagsSaga),
-//     spawn(categoriesSaga),
-//   ]);
-// }
-//
-// export default rootSaga;
+import { all, spawn } from 'redux-saga/effects';
+import authSaga from "../components/Auth/redux/saga";
+
+function* rootSaga() {
+    yield all([
+        spawn(authSaga),
+    ]);
+}
+
+export default rootSaga;
