@@ -7,6 +7,7 @@ import {ROUTES} from "./constans";
 import ProductsListPage from "../pages/ProductsListPage";
 import LoginPage from "../pages/LoginPage";
 import ProductsInfoPage from "../pages/ProductInfoPage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 
 const Routes = () => {
@@ -19,6 +20,7 @@ const Routes = () => {
                         <Route exact path='/' component={ProductsListPage}/>
                         <Route path={ROUTES.login} component={LoginPage}/>
                         <Route path={ROUTES.dynamic.product()} component={ProductsInfoPage}/>
+                        <Route component={NotFoundPage}/>
                     </Switch>
                 </Suspense>
             </ErrorBoundary>
