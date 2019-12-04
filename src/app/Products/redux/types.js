@@ -1,0 +1,5 @@
+const IDENTIFIER = "/products/";
+
+export const SET_PRODUCTS = `${IDENTIFIER}SET_PRODUCTS`;
+export const DELETE_PRODUCT = `${IDENTIFIER}DELETE_PRODUCT`;
+export const ADD_PRODUCT = `${IDENTIFIER}ADD_PRODUCT`;

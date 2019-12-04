@@ -1,6 +1,6 @@
-import React, { lazy } from 'react';
+import React, { lazy } from "react";
 
-const Login = lazy(() => import('../components/Auth/Login'));
+const Login = lazy(() => import("../app/Auth/components/Auth/Login"));
 
 const LoginPage = () => <Login />;
 

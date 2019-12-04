@@ -1,6 +1,8 @@
-import React, { lazy } from 'react';
+import React, { lazy } from "react";
 
-const ProductList = lazy(() => import('../components/ProductList/ProductList'));
+const ProductList = lazy(() =>
+  import("../app/Products/components/ProductList/ProductList")
+);
 
 const ProductsListPage = () => <ProductList />;
 
