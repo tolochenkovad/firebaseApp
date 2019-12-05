@@ -1,20 +1,31 @@
-import React, { lazy } from 'react';
-import {getProducs} from "../components/ProductList/redux/selectors";
-import { useSelector } from "react-redux";
+import React, { lazy } from "react";
+import { connect } from "react-redux";
+import { ROUTES } from "../routes/constans";
+import { Redirect } from "react-router-dom";
+import { getProductsFirestore } from "../app/Products/redux/selectors";
 
-const ProductInfo = lazy(() => import('../components/ProductInfo/ProductInfo'));
+const ProductInfo = lazy(() =>
+  import("../app/Products/components/ProductInfo/ProductInfo")
+);
 
-const ProductsInfoPage = ({match}) => {
+const ProductsInfoPage = ({ match, productFirestore }) => {
+  const numberPage = match.params.id;
+  const product =
+    productFirestore && productFirestore.find(p => numberPage === p.id);
 
-    const products = useSelector(state => getProducs(state));
-
-    const numberPage = +match.params.id;
-    const product = products.filter(p => numberPage === p.id)[0];
-
-    return(
-       <ProductInfo product={product}/>
-    )
-
+  return (
+    <>
+      {product ? (
+        <ProductInfo product={product} />
+      ) : (
+        <Redirect to={ROUTES.main} />
+      )}
+    </>
+  );
 };
 
-export default ProductsInfoPage;
+const mapStateToProps = state => ({
+  productFirestore: getProductsFirestore(state),
+});
+
+export default connect(mapStateToProps, {})(ProductsInfoPage);

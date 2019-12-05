@@ -1,6 +1,7 @@
 export const ROUTES = {
-    login: '/login',
-    dynamic: {
-        product: (id = ':id') => `/product/${id}`,
-    },
+  main: "/",
+  login: "/login",
+  dynamic: {
+    product: (id = ":id") => `/product/${id}`,
+  },
 };
