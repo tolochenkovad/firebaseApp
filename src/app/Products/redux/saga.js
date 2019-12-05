@@ -1,63 +1,57 @@
 import { takeLatest, put, call, select } from "redux-saga/effects";
-import { ADD_PRODUCT, DELETE_PRODUCT, SET_PRODUCTS } from "./types";
-import { getDataFirestore } from "../../../api/firebase/getDataFirestore";
-import { POSTFIX } from "../../../constans/constans";
+import {
+  addDoc,
+  deleteDoc,
+  fetchCollection,
+  getShapShot,
+} from "../../../api/firebase/firebaseApi";
 import { getNewProductData } from "./selectors";
-import { getFirestore } from "redux-firestore";
 import { toastr } from "react-redux-toastr";
+import {
+  ADD_PRODUCT_FAILED,
+  ADD_PRODUCT_REQUEST,
+  DELETE_PRODUCT_FAILED,
+  DELETE_PRODUCT_REQUEST,
+  SET_PRODUCTS_FAILED,
+  SET_PRODUCTS_REQUEST,
+  SET_PRODUCTS_SUCCESS,
+} from "./types";
 
 function* setProducts() {
-  yield put({
-    type: SET_PRODUCTS + POSTFIX.START,
-  });
   try {
-    const snapShot = yield call(() => getDataFirestore("productsCloud"));
-    const allProducts = snapShot.docs.map(doc => ({
-      ...doc.data(),
-      id: doc.id,
-    }));
+    const snapShot = yield call(() => getShapShot("productsCloud"));
+    const allProducts = yield call(() => fetchCollection(snapShot));
     yield put({
-      type: SET_PRODUCTS + POSTFIX.SUCCESSFUL,
+      type: SET_PRODUCTS_SUCCESS,
       payload: allProducts,
     });
   } catch (error) {
     yield call(() => toastr.error(error.message));
     yield put({
-      type: SET_PRODUCTS + POSTFIX.FAILURE,
+      type: SET_PRODUCTS_FAILED,
       error: error.message,
     });
   }
 }
 
 function* deleteProduct({ payload }) {
-  yield put({
-    type: DELETE_PRODUCT + POSTFIX.START,
-  });
   try {
-    const firestoreData = getFirestore();
-    yield call([
-      firestoreData.collection("productsCloud").doc(payload),
-      "delete",
-    ]);
+    yield call(() => deleteDoc("productsCloud", payload));
     yield call(() => toastr.success("Successfully removed"));
     yield put({
-      type: SET_PRODUCTS,
+      type: SET_PRODUCTS_REQUEST,
     });
   } catch (error) {
     yield call(() => toastr.error(error.message));
     yield put({
-      type: DELETE_PRODUCT + POSTFIX.FAILURE,
+      type: DELETE_PRODUCT_FAILED,
       error: error.message,
     });
   }
 }
 
 function* addProduct() {
-  yield put({
-    type: ADD_PRODUCT + POSTFIX.START,
-  });
   try {
-    const firestoreData = getFirestore();
     const productFormData = yield select(getNewProductData);
     const newProduct = {
       img: productFormData.img,
@@ -67,26 +61,24 @@ function* addProduct() {
       price: productFormData.price,
       location: productFormData.location,
     };
-    yield call([firestoreData.collection("productsCloud"), "add"], {
-      ...newProduct,
-    });
+    yield call(() => addDoc("productsCloud", newProduct));
     yield call(() => toastr.success("Successfully added"));
     yield put({
-      type: SET_PRODUCTS,
+      type: SET_PRODUCTS_REQUEST,
     });
   } catch (error) {
     yield call(() => toastr.error(error.message));
     yield put({
-      type: ADD_PRODUCT + POSTFIX.FAILURE,
+      type: ADD_PRODUCT_FAILED,
       error: error.message,
     });
   }
 }
 
 function* productsSaga() {
-  yield takeLatest(SET_PRODUCTS, setProducts);
-  yield takeLatest(DELETE_PRODUCT, deleteProduct);
-  yield takeLatest(ADD_PRODUCT, addProduct);
+  yield takeLatest(SET_PRODUCTS_REQUEST, setProducts);
+  yield takeLatest(DELETE_PRODUCT_REQUEST, deleteProduct);
+  yield takeLatest(ADD_PRODUCT_REQUEST, addProduct);
 }
 
 export default productsSaga;

@@ -10,10 +10,3 @@ export const PAGE_TITLES = [
     title: "404",
   },
 ];
-
-export const POSTFIX = {
-  START: "_START",
-  STOP: "_STOP",
-  FAILURE: "_FAILURE",
-  SUCCESSFUL: "_SUCCESSFUL",
-};
